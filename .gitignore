@@ -1,0 +1,8 @@
+terraform.state*
+terraform.state.backup*
+.teerraform.lick.hcl
+.terraform
+terraform.tfvars
+kubeconfig
+talosconfig
+.terraform.lock*
