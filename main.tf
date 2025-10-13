@@ -1,3 +1,22 @@
+terraform {
+  required_providers {
+    helm = {
+      source  = "hashicorp/helm"
+      version = "~> 3.0.2"
+    }
+  }
+}
+
+provider "kubernetes" {
+  config_path = "${path.module}/kubeconfig"
+}
+
+provider "helm" {
+  kubernetes = {
+    config_path = "${path.module}/kubeconfig"
+  }
+}
+
 module "kubernetes" {
   source  = "hcloud-k8s/kubernetes/hcloud"
   version = "3.3.0"
@@ -20,14 +39,53 @@ module "kubernetes" {
   cluster_delete_protection = false
 }
 
-//helm rlease for grafana
-# 2) create ns
-# kubectl create ns monitoring
+resource "kubernetes_namespace" "monitoring" {
+  depends_on = [ module.kubernetes ]
+  metadata {
+    name = "monitoring"
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/audit"   = "privileged"
+      "pod-security.kubernetes.io/warn"    = "privileged"
+    }
+  }
+}
 
-# # 3) install kube-prometheus-stack (includes Grafana, Prometheus, Alertmanager)
-# helm upgrade --install kube-prom \
-#   prometheus-community/kube-prometheus-stack \
-#   --namespace monitoring \
-#   --set grafana.service.type=LoadBalancer \
-#   --set grafana.adminPassword='S3cureP@ss' \
-#   --set prometheus.service.type=ClusterIP
+resource "helm_release" "kube_prometheus_stack" {
+  depends_on       = [kubernetes_namespace.monitoring]
+  name             = "monitoring"
+  namespace        = "monitoring"
+  create_namespace = true
+
+  repository = "https://prometheus-community.github.io/helm-charts"
+  chart      = "kube-prometheus-stack"
+
+  values = [
+    yamlencode({
+      prometheus = {
+        prometheusSpec = { maximumStartupDurationSeconds = 300 }
+      }
+    })
+  ]
+}
+
+resource "helm_release" "preview_sweeper" {
+  depends_on       = [helm_release.kube_prometheus_stack]
+  name             = "namespace-preview-sweeper"
+  repository       = "oci://ghcr.io/seekin4u/helm"
+  chart            = "namespace-preview-sweeper"
+  version          = "0.2.0"
+  namespace        = "namespace-preview-sweeper"
+  create_namespace = true
+
+  values = [
+    yamlencode({
+      image = { tag = "arm64"}
+      replicaCount   = 1
+      serviceMonitor = { enabled = false }
+      leaderElection = { enabled = false }
+      sweepEvery     = "1m"
+      ttl            = "2m"
+    })
+  ]
+}

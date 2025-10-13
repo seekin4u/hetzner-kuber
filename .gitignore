@@ -1,5 +1,6 @@
-terraform.state*
-terraform.state.backup*
+terraform.tfstate
+terraform.tfstate.backup*
+terraform.state.*
 .teerraform.lick.hcl
 .terraform
 terraform.tfvars
