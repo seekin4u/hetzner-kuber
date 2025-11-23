@@ -1,17 +1,25 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: headlamp-ingress
-  namespace: headlamp
+  name: apps-ingress
+  namespace: default
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
 spec:
   ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: /
-        pathType: Prefix
+      - path: /podinfo(/|$)(.*)
+        pathType: ImplementationSpecific
+        backend:
+          service:
+            name: podinfo
+            port:
+              number: 80
+      - path: /headlamp(/|$)(.*)
+        pathType: ImplementationSpecific
         backend:
           service:
             name: headlamp
