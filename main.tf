@@ -1,30 +1,3 @@
-terraform {
-  required_providers {
-    helm = {
-      source  = "hashicorp/helm"
-      version = "3.1.1"
-    }
-
-    aws = {
-      source = "hashicorp/aws"
-      version = "6.22.1"
-    }
-
-  }
-}
-
-provider "aws" {
-  region = "us-east-1"
-}
-provider "kubernetes" {
-  config_path = "${path.module}/kubeconfig"
-}
-provider "helm" {
-  kubernetes = {
-    config_path = "${path.module}/kubeconfig"
-  }
-}
-
 module "kubernetes" {
   source  = "hcloud-k8s/kubernetes/hcloud"
   version = "3.12.2"
@@ -100,7 +73,7 @@ resource "helm_release" "preview_sweeper" {
 
 resource "helm_release" "headlamp" {
   name       = "headlamp"
-  namespace  = "kube-"
+  namespace  = "headlamp"
   repository = "https://kubernetes-sigs.github.io/headlamp/"
   chart      = "headlamp"
 
@@ -111,3 +84,60 @@ resource "helm_release" "headlamp" {
   ]
 }
 
+resource "helm_release" "flux2" {
+  repository = "https://fluxcd-community.github.io/helm-charts"
+  chart      = "flux2"
+  version    = "2.12.4"
+
+  name      = "flux2"
+  namespace = "flux-system"
+
+  create_namespace = true
+}
+
+resource "kubernetes_secret" "ssh_keypair" {
+  metadata {
+    name      = "ssh-keypair"
+    namespace = "flux-system"
+  }
+
+  type = "Opaque"
+
+  data = {
+    "identity.pub" = tls_private_key.flux.public_key_openssh
+    "identity"     = tls_private_key.flux.private_key_pem
+    "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
+  }
+
+  depends_on = [helm_release.flux2]
+}
+
+resource "helm_release" "flux2_sync" {
+  repository = "https://fluxcd-community.github.io/helm-charts"
+  chart      = "flux2-sync"
+  version    = "1.8.2"
+
+  name      = "flux-sync"
+  namespace = "flux-system"
+
+  set = [
+    {
+      name  = "gitRepository.spec.url"
+      value = "ssh://github.com/seekin4u/hetzner-kuber.git"
+    },
+    {
+      name  = "gitRepository.spec.ref.branch"
+      value = "main"
+    },
+    {
+      name  = "gitRepository.spec.secretRef.name"
+      value = kubernetes_secret.ssh_keypair.metadata[0].name
+    },
+    {
+      name  = "gitRepository.spec.interval"
+      value = "1m"
+    }
+  ]
+
+  depends_on = [kubernetes_secret.ssh_keypair]
+}
