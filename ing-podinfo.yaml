@@ -10,7 +10,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /podinfo
+      - path: /podinfo/
         pathType: Prefix
         backend:
           service:
