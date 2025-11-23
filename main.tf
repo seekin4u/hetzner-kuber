@@ -117,7 +117,7 @@ resource "helm_release" "flux2_sync" {
   chart      = "flux2-sync"
   version    = "1.8.2"
 
-  name      = "flux-sync"
+  name      = "flux-system"
   namespace = "flux-system"
 
   set = [
