@@ -100,10 +100,14 @@ resource "helm_release" "preview_sweeper" {
 
 resource "helm_release" "headlamp" {
   name       = "headlamp"
-  namespace  = "kube-system"
+  namespace  = "kube-"
   repository = "https://kubernetes-sigs.github.io/headlamp/"
   chart      = "headlamp"
 
   create_namespace = true
+
+  values = [
+    file("${path.module}/values.yaml")
+  ]
 }
 
