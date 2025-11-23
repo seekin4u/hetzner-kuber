@@ -2,15 +2,23 @@ terraform {
   required_providers {
     helm = {
       source  = "hashicorp/helm"
-      version = "~> 3.0.2"
+      version = "3.1.1"
     }
+
+    aws = {
+      source = "hashicorp/aws"
+      version = "6.22.1"
+    }
+
   }
 }
 
+provider "aws" {
+  region = "us-east-1"
+}
 provider "kubernetes" {
   config_path = "${path.module}/kubeconfig"
 }
-
 provider "helm" {
   kubernetes = {
     config_path = "${path.module}/kubeconfig"
@@ -19,7 +27,7 @@ provider "helm" {
 
 module "kubernetes" {
   source  = "hcloud-k8s/kubernetes/hcloud"
-  version = "3.3.0"
+  version = "3.12.2"
 
   cluster_name = "k8s"
   hcloud_token = var.hcloud
@@ -89,3 +97,13 @@ resource "helm_release" "preview_sweeper" {
     })
   ]
 }
+
+resource "helm_release" "headlamp" {
+  name       = "headlamp"
+  namespace  = "kube-system"
+  repository = "https://kubernetes-sigs.github.io/headlamp/"
+  chart      = "headlamp"
+
+  create_namespace = true
+}
+
