@@ -17,4 +17,4 @@ serviceAccount:
   name: ""
 
 nameOverride: ""
-fullnameOverride: ""
+fullnameOverride: my-project-dev-hello-world
