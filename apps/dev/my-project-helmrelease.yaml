@@ -8,10 +8,6 @@ spec:
 
   chart:
     spec:
-      sourceRef:
-        kind: GitRepository
-        name: my-project
-        namespace: flux-system
       chart: ./helm
 
   valuesFrom:

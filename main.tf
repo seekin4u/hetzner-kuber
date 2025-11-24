@@ -103,68 +103,69 @@ resource "helm_release" "preview_sweeper" {
 # config:
 #   baseUrl: "/headlamp/"
 
-resource "helm_release" "flux2" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2"
-  version    = "2.12.4"
-
-  name      = "flux2"
-  namespace = "flux-system"
-
-  create_namespace = true
-}
-
-resource "kubernetes_secret" "ssh_keypair" {
-  metadata {
-    name      = "ssh-keypair"
-    namespace = "flux-system"
-  }
-
-  type = "Opaque"
-
-  data = {
-    "identity.pub" = tls_private_key.flux.public_key_openssh
-    "identity"     = tls_private_key.flux.private_key_pem
-    "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
-  }
-
-  depends_on = [helm_release.flux2]
-}
-
-resource "helm_release" "flux2_sync" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2-sync"
-  version    = "1.8.2"
-
-  name      = "flux-system"
-  namespace = "flux-system"
-
-  set = [
-    {
-      name  = "gitRepository.spec.url"
-      value = "ssh://github.com/seekin4u/hetzner-kuber.git"
-    },
-    {
-      name  = "gitRepository.spec.ref.branch"
-      value = "main"
-    },
-    {
-      name  = "gitRepository.spec.secretRef.name"
-      value = kubernetes_secret.ssh_keypair.metadata[0].name
-    },
-    {
-      name  = "gitRepository.spec.interval"
-      value = "1m"
-    },
-    {
-      name  = "kustomizations.root.path"
-      value = "./"
-    },
-    {
-      name  = "kustomizations.root.prune"
-      value = "true"
-    }
-  ]
-
-  depends_on = [kubernetes_secret.ssh_keypair]
-}
+ resource "helm_release" "flux2" {
+   repository = "https://fluxcd-community.github.io/helm-charts"
+   chart      = "flux2"
+   version    = "2.12.4"
+ 
+   name      = "flux2"
+   namespace = "flux-system"
+ 
+   create_namespace = true
+ }
+ 
+ resource "kubernetes_secret" "ssh_keypair" {
+   metadata {
+     name      = "ssh-keypair"
+     namespace = "flux-system"
+   }
+ 
+   type = "Opaque"
+ 
+   data = {
+     "identity.pub" = tls_private_key.flux.public_key_openssh
+     "identity"     = tls_private_key.flux.private_key_pem
+     "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
+   }
+ 
+   depends_on = [helm_release.flux2]
+ }
+ 
+ resource "helm_release" "flux2_sync" {
+   repository = "https://fluxcd-community.github.io/helm-charts"
+   chart      = "flux2-sync"
+   version    = "1.8.2"
+ 
+   name      = "flux2-sync"
+   namespace = "flux-system"
+ 
+   set = [
+     {
+       name  = "gitRepository.spec.url"
+       value = "ssh://github.com/seekin4u/hetzner-kuber.git"
+     },
+     {
+       name  = "gitRepository.spec.ref.branch"
+       value = "main"
+     },
+     {
+       name  = "gitRepository.spec.secretRef.name"
+       value = kubernetes_secret.ssh_keypair.metadata[0].name
+     },
+     {
+       name  = "gitRepository.spec.interval"
+       value = "1m"
+     },
+     {
+       name  = "kustomizations.root.path"
+       value = "./"
+     },
+     {
+       name  = "kustomizations.root.prune"
+       value = "true"
+     }
+   ]
+ 
+   depends_on = [kubernetes_secret.ssh_keypair]
+ }
+ 
