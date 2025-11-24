@@ -155,6 +155,14 @@ resource "helm_release" "flux2_sync" {
     {
       name  = "gitRepository.spec.interval"
       value = "1m"
+    },
+    {
+      name  = "kustomizations.root.path"
+      value = "./"
+    },
+    {
+      name  = "kustomizations.root.prune"
+      value = "true"
     }
   ]
 
