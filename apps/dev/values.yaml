@@ -1,3 +1,8 @@
 replicaCount: 1
 environment: "dev"
 logLevel: "debug"
+
+ingress:
+  enabled: true
+  host: static.98.13.98.91.clients.your-server.de
+  path: /dev/
