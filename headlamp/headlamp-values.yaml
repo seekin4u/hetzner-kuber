@@ -10,6 +10,9 @@ ingress:
     - host: static.98.13.98.91.clients.your-server.de
       paths:
         - path: /headlamp(/|$)(.*)
-          type: Prefix
+          type: ImplementationSpecific
 
   tls: []
+
+config:
+  baseUrl: "/headlamp/"

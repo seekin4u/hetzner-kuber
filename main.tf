@@ -80,7 +80,7 @@ resource "helm_release" "headlamp" {
   create_namespace = true
 
   values = [
-    file("${path.module}/headlamp-values.yaml")
+    file("${path.module}/headlamp/headlamp-values.yaml")
   ]
 }
 
