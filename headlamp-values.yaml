@@ -1,0 +1,15 @@
+ingress:
+  enabled: true
+
+  ingressClassName: nginx
+
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+  hosts:
+    - host: static.98.13.98.91.clients.your-server.de
+      paths:
+        - path: /headlamp(/|$)(.*)
+          type: Prefix
+
+  tls: []
