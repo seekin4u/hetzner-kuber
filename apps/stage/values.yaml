@@ -1,5 +1,5 @@
 replicaCount: 1
-environment: "dev"
+environment: "stage"
 logLevel: "debug"
 
 service:
@@ -14,7 +14,7 @@ ingress:
   hosts:
     - host: static.98.13.98.91.clients.your-server.de
       paths:
-        - path: /
+        - path: /stage
           pathType: Prefix
   tls: []
 
