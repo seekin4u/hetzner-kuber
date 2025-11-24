@@ -11,7 +11,7 @@ spec:
       chart: ./helm
       sourceRef:
         kind: GitRepository
-        name: my-project
+        name: flux2-sync
         namespace: flux-system
 
   valuesFrom:
