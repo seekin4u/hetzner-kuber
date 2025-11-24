@@ -4,7 +4,7 @@ logLevel: "debug"
 
 service:
   type: ClusterIP
-  port: 80
+  port: 81
 
 ingress:
   enabled: true
