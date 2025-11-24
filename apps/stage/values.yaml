@@ -1,0 +1,27 @@
+replicaCount: 1
+environment: "dev"
+logLevel: "debug"
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  hosts:
+    - host: static.98.13.98.91.clients.your-server.de
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+nameOverride: ""
+fullnameOverride: my-project-dev-hello-world
