@@ -5,6 +5,6 @@ metadata:
   namespace: flux-system
 spec:
   interval: 1m
-  url: https://github.com/seekin4u/flux-testing
+  url: https://github.com/seekin4u/hetzner-kuber
   ref:
     branch: main
