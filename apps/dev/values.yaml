@@ -10,3 +10,11 @@ ingress:
   enabled: true
   host: static.98.13.98.91.clients.your-server.de
   path: /dev/
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+nameOverride: ""
+fullnameOverride: ""

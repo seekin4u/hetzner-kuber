@@ -17,3 +17,4 @@ spec:
   valuesFrom:
     - kind: ConfigMap
       name: my-project-dev-values
+      valuesKey: values.yaml
