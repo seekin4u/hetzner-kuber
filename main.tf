@@ -106,7 +106,7 @@ resource "helm_release" "preview_sweeper" {
  resource "helm_release" "flux2" {
    repository = "https://fluxcd-community.github.io/helm-charts"
    chart      = "flux2"
-   version    = "2.12.4"
+   version    = "2.17.1"
  
    name      = "flux2"
    namespace = "flux-system"
@@ -134,7 +134,7 @@ resource "helm_release" "preview_sweeper" {
  resource "helm_release" "flux2_sync" {
    repository = "https://fluxcd-community.github.io/helm-charts"
    chart      = "flux2-sync"
-   version    = "1.8.2"
+   version    = "1.14.0"
  
    name      = "flux2-sync"
    namespace = "flux-system"
