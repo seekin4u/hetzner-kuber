@@ -71,18 +71,37 @@ resource "helm_release" "preview_sweeper" {
   ]
 }
 
-resource "helm_release" "headlamp" {
-  name       = "headlamp"
-  namespace  = "headlamp"
-  repository = "https://kubernetes-sigs.github.io/headlamp/"
-  chart      = "headlamp"
+# resource "helm_release" "headlamp" {
+#   name       = "headlamp"
+#   namespace  = "headlamp"
+#   repository = "https://kubernetes-sigs.github.io/headlamp/"
+#   chart      = "headlamp"
 
-  create_namespace = true
+#   create_namespace = true
 
-  values = [
-    file("${path.module}/headlamp/headlamp-values.yaml")
-  ]
-}
+#   values = [
+#     file("${path.module}/headlamp/headlamp-values.yaml")
+#   ]
+# }
+
+# ingress:
+#   enabled: true
+
+#   ingressClassName: nginx
+
+#   annotations:
+#     nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+#   hosts:
+#     - host: static.98.13.98.91.clients.your-server.de
+#       paths:
+#         - path: /headlamp(/|$)(.*)
+#           type: ImplementationSpecific
+
+#   tls: []
+
+# config:
+#   baseUrl: "/headlamp/"
 
 resource "helm_release" "flux2" {
   repository = "https://fluxcd-community.github.io/helm-charts"
