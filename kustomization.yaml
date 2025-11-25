@@ -1,6 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - ./repositories
+  - ./source-repository.yaml
   - ./apps/stage
   - ./apps/dev
