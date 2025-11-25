@@ -8,10 +8,11 @@ spec:
 
   chart:
     spec:
-      chart: ./helm
+      chart: hello-world
+      version: "0.1.0"
       sourceRef:
-        kind: GitRepository
-        name: flux2-sync
+        kind: HelmRepository
+        name: hetzner-kuber
         namespace: flux-system
 
   valuesFrom:
