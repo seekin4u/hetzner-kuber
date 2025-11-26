@@ -43,5 +43,11 @@ spec:
       name: my-project-stage-secret
       valuesKey: FRUIT
       targetPath: fruit
+      
+    - kind: Secret
+      name: secret-values
+      valuesKey: test
+      targetPath: test
+
 #key FRUIT from the secret will become key fruit in the helm values with a value from FRUIT
 #important due to https://helm.sh/docs/intro/using_helm/#the-format-and-limitations-of---set
