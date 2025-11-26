@@ -8,6 +8,9 @@ spec:
 
   driftDetection:
     mode: enabled
+    # ignore:
+    #   - paths: ["/spec/replicas"]
+
 
   chart:
     spec:
