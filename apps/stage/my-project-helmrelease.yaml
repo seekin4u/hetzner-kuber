@@ -45,94 +45,86 @@ spec:
       targetPath: fruit
 
     - kind: Secret
-      name: secret-values
-      valuesKey: test
-      targetPath: test
-
-    - kind: Secret
-      name: secret-values
+      name: secret-values2
       valuesKey: replicaCount
       targetPath: replicaCount
-    
+
     - kind: Secret
-      name: secret-values
+      name: secret-values2
       valuesKey: environment
       targetPath: environment
-    
+
     - kind: Secret
-      name: secret-values
+      name: secret-values2
       valuesKey: logLevel
       targetPath: logLevel
 
     - kind: Secret
-      name: secret-values
-      valuesKey: service.type
-      targetPath: service.type
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: service.port
-      targetPath: service.port
-    
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.enabled
-      targetPath: ingress.enabled
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.className
-      targetPath: ingress.className
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.annotations."nginx\.ingress\.kubernetes\.io/rewrite-target"
-      targetPath: ingress.annotations."nginx\.ingress\.kubernetes\.io/rewrite-target"
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.hosts[0].host
-      targetPath: ingress.hosts[0].host
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.hosts[0].paths[0].path
-      targetPath: ingress.hosts[0].paths[0].path
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.hosts[0].paths[0].pathType
-      targetPath: ingress.hosts[0].paths[0].pathType
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: ingress.tls
-      targetPath: ingress.tls
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: serviceAccount.create
-      targetPath: serviceAccount.create
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: serviceAccount.annotations
-      targetPath: serviceAccount.annotations
-
-    - kind: Secret
-      name: secret-values
-      valuesKey: serviceAccount.name
-      targetPath: serviceAccount.name
-
-    - kind: Secret
-      name: secret-values
+      name: secret-values2
       valuesKey: nameOverride
       targetPath: nameOverride
 
     - kind: Secret
-      name: secret-values
+      name: secret-values2
       valuesKey: fullnameOverride
       targetPath: fullnameOverride
+
+    # service.*
+    - kind: Secret
+      name: secret-values2
+      valuesKey: service_type
+      targetPath: service.type
+
+    - kind: Secret
+      name: secret-values2
+      valuesKey: service_port
+      targetPath: service.port
+
+    # ingress.*
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_enabled
+      targetPath: ingress.enabled
+
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_className
+      targetPath: ingress.className
+
+    # ingress.annotations.*
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_annotations_rewrite_target
+      targetPath: ingress.annotations.rewriteTarget
+
+    # ingress.hosts[0]
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_host_0_host
+      targetPath: ingress.hosts[0].host
+
+    # ingress.hosts[0].paths[0]
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_host_0_paths_0_path
+      targetPath: ingress.hosts[0].paths[0].path
+
+    - kind: Secret
+      name: secret-values2
+      valuesKey: ingress_host_0_paths_0_pathType
+      targetPath: ingress.hosts[0].paths[0].pathType
+
+    # serviceAccount.*
+    - kind: Secret
+      name: secret-values2
+      valuesKey: serviceAccount_create
+      targetPath: serviceAccount.create
+
+    - kind: Secret
+      name: secret-values2
+      valuesKey: serviceAccount_name
+      targetPath: serviceAccount.name
+
 
 
 #key FRUIT from the secret will become key fruit in the helm values with a value from FRUIT
