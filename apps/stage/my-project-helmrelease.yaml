@@ -35,19 +35,59 @@ spec:
     #   name: my-project-stage-values
     #   valuesKey: TEST
     #   targetPath: test
-    - kind: Secret
-      name: my-project-stage-secret
-      valuesKey: values.yaml
+    # - kind: Secret
+    #   name: my-project-stage-secret
+    #   valuesKey: values.yaml
     
     - kind: Secret
       name: my-project-stage-secret
       valuesKey: FRUIT
       targetPath: fruit
-      
+
     - kind: Secret
       name: secret-values
       valuesKey: test
       targetPath: test
+    
+    - kind: Secret
+      name: secret-values
+      valuesKey: logLevel
+      targetPath: logLevel
+
+    - kind: Secret
+      name: secret-values
+      valuesKey: service.type
+      targetPath: service.type
+
+    - kind: Secret
+      name: secret-values
+      valuesKey: service.port
+      targetPath: service.port
+    
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: ingress.enabled
+    #   targetPath: ingress.enabled
+
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: ingress.className
+    #   targetPath: ingress.className
+
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: ingress.annotations."nginx\.ingress\.kubernetes\.io/rewrite-target"
+    #   targetPath: ingress.annotations."nginx\.ingress\.kubernetes\.io/rewrite-target"
+
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: ingress.hosts[0].host
+    #   targetPath: ingress.hosts[0].host
+
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: ingress.hosts[0].paths[0].path
+    #   targetPath: ingress.hosts[0].paths[0].path
 
 #key FRUIT from the secret will become key fruit in the helm values with a value from FRUIT
 #important due to https://helm.sh/docs/intro/using_helm/#the-format-and-limitations-of---set
