@@ -54,15 +54,15 @@ spec:
       valuesKey: logLevel
       targetPath: logLevel
 
-    - kind: Secret
-      name: secret-values
-      valuesKey: service.type
-      targetPath: service.type
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: service.type
+    #   targetPath: service.type
 
-    - kind: Secret
-      name: secret-values
-      valuesKey: service.port
-      targetPath: service.port
+    # - kind: Secret
+    #   name: secret-values
+    #   valuesKey: service.port
+    #   targetPath: service.port
     
     # - kind: Secret
     #   name: secret-values
