@@ -6,6 +6,9 @@ metadata:
 spec:
   interval: 1m
 
+  driftDetection:
+    mode: enabled
+
   chart:
     spec:
       chart: hello-world
