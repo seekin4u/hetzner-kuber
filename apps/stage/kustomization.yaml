@@ -9,6 +9,10 @@ configMapGenerator:
   - name: my-project-stage-values
     files:
       - values.yaml
+    envs:
+      - devops.env
+    literals:
+      - FRUIT=apple
 
 secretGenerator:
   - name: my-project-stage-secret
