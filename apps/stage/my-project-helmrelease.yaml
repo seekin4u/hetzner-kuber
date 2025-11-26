@@ -38,3 +38,8 @@ spec:
     - kind: Secret
       name: my-project-stage-secret
       valuesKey: values.yaml
+    
+    - kind: Secret
+      name: my-project-stage-secret
+      valuesKey: FRUIT
+      targetPath: fruit
