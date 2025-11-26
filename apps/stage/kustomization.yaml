@@ -10,7 +10,7 @@ configMapGenerator:
     files:
       - values.yaml
     envs:
-      - devops.env
+      - example.env
     literals:
       - FRUIT=apple
 
