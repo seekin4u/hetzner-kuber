@@ -18,6 +18,8 @@ secretGenerator:
   - name: my-project-stage-secret
     files:
       - values.yaml
+    literals:
+      - FRUIT=apple
     type: Opaque
 
 generatorOptions:
