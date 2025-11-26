@@ -22,16 +22,19 @@ spec:
         namespace: flux-system
 
   valuesFrom:
-    - kind: ConfigMap
-      name: my-project-stage-values
+    # - kind: ConfigMap
+    #   name: my-project-stage-values
+    #   valuesKey: values.yaml
+
+    # - kind: ConfigMap
+    #   name: my-project-stage-values
+    #   valuesKey: FRUIT
+    #   targetPath: fruit
+
+    # - kind: ConfigMap
+    #   name: my-project-stage-values
+    #   valuesKey: TEST
+    #   targetPath: test
+    - kind: Secret
+      name: my-project-stage-secret
       valuesKey: values.yaml
-
-    - kind: ConfigMap
-      name: my-project-stage-values
-      valuesKey: FRUIT
-      targetPath: fruit
-
-    - kind: ConfigMap
-      name: my-project-stage-values
-      valuesKey: TEST
-      targetPath: test
