@@ -103,6 +103,48 @@ resource "helm_release" "preview_sweeper" {
 # config:
 #   baseUrl: "/headlamp/"
 
+resource "helm_release" "eso" {
+  repository = "https://charts.external-secrets.io"
+  chart      = "external-secrets"
+  version    = "1.1.0"
+
+  name      = "external-secrets"
+  namespace = "external-secrets"
+
+  create_namespace = true
+
+  values = [
+    <<-EOF
+    installCRDs: true
+    crds:
+      createClusterExternalSecret: true
+      createClusterSecretStore: true
+    EOF
+  ]
+}
+
+resource "kubernetes_secret" "eso_key" {
+  metadata {
+    name      = "awssm-secret"
+    namespace = "external-secrets"
+  }
+
+  type = "Opaque"
+
+  data = {
+    "access-key" = var.eso_access_key
+    "secret-access-key" = var.eso_secret_key
+  }
+
+  depends_on = [helm_release.eso]
+}
+
+
+resource "tls_private_key" "flux" {
+  algorithm   = "ECDSA"
+  ecdsa_curve = "P256"
+}
+
 resource "helm_release" "flux2" {
   repository = "https://fluxcd-community.github.io/helm-charts"
   chart      = "flux2"
