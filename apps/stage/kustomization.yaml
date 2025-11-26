@@ -4,6 +4,7 @@ namespace: apps-stage
 resources:
   - my-project-helmrelease.yaml
   - namespace.yaml
+  - external-secrets.yaml
 
 configMapGenerator:
   - name: my-project-stage-values
