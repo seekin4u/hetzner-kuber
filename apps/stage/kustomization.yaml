@@ -10,5 +10,11 @@ configMapGenerator:
     files:
       - values.yaml
 
+secretGenerator:
+  - name: my-project-stage-secret
+    files:
+      - values.yaml
+    type: Opaque
+
 generatorOptions:
   disableNameSuffixHash: true
