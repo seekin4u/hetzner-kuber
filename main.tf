@@ -178,18 +178,63 @@ resource "helm_release" "flux_operator" {
 # Bootstrap Flux Instance
 # ==========================================
 resource "helm_release" "flux_instance" {
+  depends_on = [helm_release.flux_operator]
+
   name       = "flux-instance"
   namespace  = "flux-system"
   repository = "oci://ghcr.io/controlplaneio-fluxcd/charts"
   chart      = "flux-instance"
 
-  depends_on = [module.kubernetes]
-  
-  set = [
-    {
-      name  = "distribution.version"
-      value = "2.7.x"
-    }
+  values = [
+    yamlencode({
+      distribution = {
+        version = "=2.5.x"
+      }
+
+      # secrets = {
+      #   git_ssh = {
+      #     type = "kubernetes.io/ssh-auth"
+      #     stringData = {
+      #       "identity"      = file("${path.module}/id_rsa")
+      #       "identity.pub"  = file("${path.module}/id_rsa.pub")
+      #     }
+      #   }
+      # }
+
+      source = {
+        gitRepository = {
+          name      = "hetzner-kuber"
+          namespace = "flux-system"
+          spec = {
+            interval = "1m"
+            url      = "ssh://git@github.com/seekin4u/hetzner-kuber.git"
+            ref = {
+              branch = "main"
+            }
+            secretRef = {
+              name = "${kubernetes_secret.ssh_keypair.metadata[0].name}"
+            }
+          }
+        }
+      }
+
+      kustomizations = {
+        root = {
+          name      = "root"
+          namespace = "flux-system"
+          spec = {
+            interval = "1m"
+            prune    = true
+            sourceRef = {
+              kind = "GitRepository"
+              name = "hetzner-kuber"
+            }
+            path = "./"
+          }
+        }
+      }
+    })
   ]
 }
+
  
