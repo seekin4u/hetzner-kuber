@@ -191,16 +191,6 @@ resource "helm_release" "flux_instance" {
         version = "=2.5.x"
       }
 
-      # secrets = {
-      #   git_ssh = {
-      #     type = "kubernetes.io/ssh-auth"
-      #     stringData = {
-      #       "identity"      = file("${path.module}/id_rsa")
-      #       "identity.pub"  = file("${path.module}/id_rsa.pub")
-      #     }
-      #   }
-      # }
-
       source = {
         gitRepository = {
           name      = "hetzner-kuber"
@@ -212,7 +202,7 @@ resource "helm_release" "flux_instance" {
               branch = "main"
             }
             secretRef = {
-              name = "${kubernetes_secret.ssh_keypair.metadata[0].name}"
+              name = "ssh-keypair"
             }
           }
         }
