@@ -139,21 +139,9 @@ resource "kubernetes_secret" "eso_key" {
   depends_on = [helm_release.eso]
 }
 
-
 resource "tls_private_key" "flux" {
   algorithm   = "ECDSA"
   ecdsa_curve = "P256"
-}
-
-resource "helm_release" "flux2" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2"
-  version    = "2.17.1"
-
-  name      = "flux2"
-  namespace = "flux-system"
-
-  create_namespace = true
 }
 
 resource "kubernetes_secret" "ssh_keypair" {
@@ -170,44 +158,38 @@ resource "kubernetes_secret" "ssh_keypair" {
     "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
   }
 
-  depends_on = [helm_release.flux2]
+  depends_on = [module.kubernetes]
 }
 
-resource "helm_release" "flux2_sync" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2-sync"
-  version    = "1.14.0"
+# ==========================================
+# Bootstrap Flux Operator
+# ==========================================
+resource "helm_release" "flux_operator" {
+  name             = "flux-operator"
+  namespace        = "flux-system"
+  repository       = "oci://ghcr.io/controlplaneio-fluxcd/charts"
+  chart            = "flux-operator"
+  create_namespace = true
 
-  name      = "flux2-sync"
-  namespace = "flux-system"
+  depends_on = [module.kubernetes]
+}
 
+# ==========================================
+# Bootstrap Flux Instance
+# ==========================================
+resource "helm_release" "flux_instance" {
+  name       = "flux-instance"
+  namespace  = "flux-system"
+  repository = "oci://ghcr.io/controlplaneio-fluxcd/charts"
+  chart      = "flux-instance"
+
+  depends_on = [module.kubernetes]
+  
   set = [
     {
-      name  = "gitRepository.spec.url"
-      value = "ssh://github.com/seekin4u/hetzner-kuber.git"
-    },
-    {
-      name  = "gitRepository.spec.ref.branch"
-      value = "main"
-    },
-    {
-      name  = "gitRepository.spec.secretRef.name"
-      value = kubernetes_secret.ssh_keypair.metadata[0].name
-    },
-    {
-      name  = "gitRepository.spec.interval"
-      value = "1m"
-    },
-    {
-      name  = "kustomizations.root.path"
-      value = "./"
-    },
-    {
-      name  = "kustomizations.root.prune"
-      value = "true"
+      name  = "distribution.version"
+      value = "2.7.x"
     }
   ]
-
-  depends_on = [kubernetes_secret.ssh_keypair]
 }
  
