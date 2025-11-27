@@ -161,9 +161,7 @@ resource "kubernetes_secret" "ssh_keypair" {
   depends_on = [module.kubernetes]
 }
 
-# ==========================================
-# Bootstrap Flux Operator
-# ==========================================
+# https://github.com/controlplaneio-fluxcd/flux-operator/blob/main/config/terraform/main.tf
 resource "helm_release" "flux_operator" {
   name             = "flux-operator"
   namespace        = "flux-system"
@@ -173,10 +171,6 @@ resource "helm_release" "flux_operator" {
 
   depends_on = [module.kubernetes]
 }
-
-# ==========================================
-# Bootstrap Flux Instance
-# ==========================================
 resource "helm_release" "flux_instance" {
   depends_on = [helm_release.flux_operator]
 
@@ -185,42 +179,38 @@ resource "helm_release" "flux_instance" {
   repository = "oci://ghcr.io/controlplaneio-fluxcd/charts"
   chart      = "flux-instance"
 
+  # https://artifacthub.io/packages/helm/flux-instance/flux-instance?modal=values
   values = [
     yamlencode({
-      distribution = {
-        version = "=2.5.x"
-      }
-
-      source = {
-        gitRepository = {
-          name      = "hetzner-kuber"
-          namespace = "flux-system"
-          spec = {
-            interval = "1m"
-            url      = "ssh://git@github.com/seekin4u/hetzner-kuber.git"
-            ref = {
-              branch = "main"
-            }
-            secretRef = {
-              name = "ssh-keypair"
-            }
-          }
+      instance = {
+        distribution = {
+          version   = "2.7.x"
+          registry  = "ghcr.io/fluxcd"
+          artifact  = "oci://ghcr.io/controlplaneio-fluxcd/flux-operator-manifests:latest"
         }
-      }
 
-      kustomizations = {
-        root = {
-          name      = "root"
-          namespace = "flux-system"
-          spec = {
-            interval = "1m"
-            prune    = true
-            sourceRef = {
-              kind = "GitRepository"
-              name = "hetzner-kuber"
-            }
-            path = "./"
-          }
+        components = [
+          "source-controller",
+          "kustomize-controller",
+          "helm-controller",
+          "notification-controller",
+        ]
+
+        cluster = {
+          type   = "kubernetes"
+          domain = "cluster.local"
+        }
+
+        # https://github.com/controlplaneio-fluxcd/flux-operator/blob/main/api/v1/fluxinstance_types.go#L272
+        sync = {
+          interval  = "1m"
+          kind      = "GitRepository"
+          name      = "hetzner-kuber"
+          provider  = "generic"
+          url       = "ssh://git@github.com/seekin4u/hetzner-kuber.git"
+          ref       = "refs/heads/controlplane"
+          path      = "./"
+          pullSecret = "ssh-keypair"
         }
       }
     })
