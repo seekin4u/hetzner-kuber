@@ -1,12 +1,6 @@
-apiVersion: kustomize.toolkit.fluxcd.io/v1
+apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-metadata:
-  name: root
-  namespace: flux-system
-spec:
-  interval: 1m
-  prune: true
-  sourceRef:
-    kind: GitRepository
-    name: hetzner-kuber
-  path: "./"
+resources:
+  - ./source-repository.yaml
+  - ./apps/stage
+  - ./apps/dev

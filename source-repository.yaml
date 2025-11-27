@@ -1,12 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
+kind: HelmRepository
 metadata:
   name: hetzner-kuber
   namespace: flux-system
 spec:
   interval: 1m
-  url: ssh://github.com/seekin4u/hetzner-kuber.git
-  ref:
-    branch: main
-  secretRef:
-    name: ssh-keypair
+  url: https://raw.githubusercontent.com/seekin4u/hetzner-kuber/main/charts
