@@ -6,11 +6,5 @@ resources:
   - resourceinput.yaml
   - resourceset.yaml
 
-
-configMapGenerator:
-  - name: my-project-dev-values
-    files:
-      - values.yaml
-
 generatorOptions:
   disableNameSuffixHash: true
