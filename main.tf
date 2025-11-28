@@ -217,4 +217,36 @@ resource "helm_release" "flux_instance" {
   ]
 }
 
+resource "kubernetes_namespace" "apps_preview" {
+  depends_on = [ module.kubernetes ]
+  metadata {
+    name = "apps-preview"
+    labels = {
+      "pod-security.kubernetes.io/enforce" = "privileged"
+      "pod-security.kubernetes.io/audit"   = "privileged"
+      "pod-security.kubernetes.io/warn"    = "privileged"
+    }
+  }
+}
+
+# flux -n app-preview create secret git github-auth \
+#   --url=https://github.com/org/app \
+#   --username=flux \
+#   --password=${GITHUB_TOKEN}
  
+ resource "kubernetes_secret" "github_auth" {
+  metadata {
+    name      = "github-auth"
+    namespace = "apps-preview"
+  }
+
+  type = "Opaque"
+
+  data = {
+    "username" = "flux"
+    "password" = var.github_pat
+    "url"  = "https://github.com/seekin4u/hetzner-kuber"
+  }
+
+  depends_on = [kubernetes_namespace.apps_preview]
+}

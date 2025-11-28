@@ -1,0 +1,18 @@
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: app-pull-requests
+  namespace: apps-preview
+  annotations:
+    fluxcd.controlplane.io/reconcileEvery: "1m"
+spec:
+  type: GitHubPullRequest
+  url: https://github.com/seekin4u/hetzner-kuber
+  secretRef:
+    name: github-auth
+  filter:
+    labels:
+      - "deploy/flux-preview"
+  defaultValues:
+    chart: "./helm"
+# chart could ref ./charts/hop

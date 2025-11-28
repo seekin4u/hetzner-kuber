@@ -5,3 +5,4 @@ variable "hcloud" {
 
 variable "eso_secret_key"{}
 variable "eso_access_key" {}
+variable "github_pat" {}

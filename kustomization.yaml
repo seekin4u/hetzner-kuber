@@ -4,3 +4,4 @@ resources:
   - ./source-repository.yaml
   - ./apps/stage
   - ./apps/dev
+  - ./apps/preview
