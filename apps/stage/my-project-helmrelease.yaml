@@ -8,10 +8,6 @@ spec:
 
   driftDetection:
     mode: enabled
-    # ignore:
-    #   - paths: ["/spec/replicas"]
-
-
   chart:
     spec:
       chart: hello-world
@@ -22,22 +18,6 @@ spec:
         namespace: flux-system
 
   valuesFrom:
-    # - kind: ConfigMap
-    #   name: my-project-stage-values
-    #   valuesKey: values.yaml
-
-    # - kind: ConfigMap
-    #   name: my-project-stage-values
-    #   valuesKey: FRUIT
-    #   targetPath: fruit
-
-    # - kind: ConfigMap
-    #   name: my-project-stage-values
-    #   valuesKey: TEST
-    #   targetPath: test
-    # - kind: Secret
-    #   name: my-project-stage-secret
-    #   valuesKey: values.yaml
     
     - kind: Secret
       name: my-project-stage-secret
@@ -124,8 +104,6 @@ spec:
       name: secret-values2
       valuesKey: serviceAccount_name
       targetPath: serviceAccount.name
-
-
 
 #key FRUIT from the secret will become key fruit in the helm values with a value from FRUIT
 #important due to https://helm.sh/docs/intro/using_helm/#the-format-and-limitations-of---set
