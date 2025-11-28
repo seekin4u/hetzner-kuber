@@ -228,11 +228,6 @@ resource "kubernetes_namespace" "apps_preview" {
     }
   }
 }
-
-# flux -n app-preview create secret git github-auth \
-#   --url=https://github.com/org/app \
-#   --username=flux \
-#   --password=${GITHUB_TOKEN}
  
  resource "kubernetes_secret" "github_auth" {
   metadata {
