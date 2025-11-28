@@ -45,8 +45,6 @@ spec:
               kind: GitRepository
               name: app-<< inputs.id >>
         values:
-          image:
-            tag: << inputs.sha >>
           ingress:
             enabled: true
             className: nginx
