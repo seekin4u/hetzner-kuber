@@ -15,7 +15,7 @@ module "kubernetes" {
     { name = "control", type = "cx23", location = "nbg1", count = 1 }
   ]
   worker_nodepools = [
-    { name = "worker", type = "cax23", location = "nbg1", count = 2 }
+    { name = "worker", type = "cx23", location = "nbg1", count = 2 }
   ]
   cluster_delete_protection = false
 }
