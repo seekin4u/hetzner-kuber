@@ -12,10 +12,10 @@ module "kubernetes" {
   ingress_nginx_enabled = true
 
   control_plane_nodepools = [
-    { name = "control", type = "cax11", location = "fsn1", count = 1 }
+    { name = "control", type = "cx23", location = "nbg1", count = 1 }
   ]
   worker_nodepools = [
-    { name = "worker", type = "cax11", location = "fsn1", count = 2 }
+    { name = "worker", type = "cax23", location = "nbg1", count = 2 }
   ]
   cluster_delete_protection = false
 }
@@ -46,27 +46,6 @@ resource "helm_release" "kube_prometheus_stack" {
       prometheus = {
         prometheusSpec = { maximumStartupDurationSeconds = 300 }
       }
-    })
-  ]
-}
-
-resource "helm_release" "preview_sweeper" {
-  depends_on       = [helm_release.kube_prometheus_stack]
-  name             = "namespace-preview-sweeper"
-  repository       = "oci://ghcr.io/seekin4u/helm"
-  chart            = "namespace-preview-sweeper"
-  version          = "0.2.0"
-  namespace        = "namespace-preview-sweeper"
-  create_namespace = true
-
-  values = [
-    yamlencode({
-      image = { tag = "arm64"}
-      replicaCount   = 1
-      serviceMonitor = { enabled = false }
-      leaderElection = { enabled = false }
-      sweepEvery     = "1m"
-      ttl            = "2m"
     })
   ]
 }
@@ -121,93 +100,5 @@ resource "helm_release" "eso" {
       createClusterSecretStore: true
     EOF
   ]
-}
-
-resource "kubernetes_secret" "eso_key" {
-  metadata {
-    name      = "awssm-secret"
-    namespace = "external-secrets"
-  }
-
-  type = "Opaque"
-
-  data = {
-    "access-key" = var.eso_access_key
-    "secret-access-key" = var.eso_secret_key
-  }
-
-  depends_on = [helm_release.eso]
-}
-
-
-resource "tls_private_key" "flux" {
-  algorithm   = "ECDSA"
-  ecdsa_curve = "P256"
-}
-
-resource "helm_release" "flux2" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2"
-  version    = "2.17.1"
-
-  name      = "flux2"
-  namespace = "flux-system"
-
-  create_namespace = true
-}
-
-resource "kubernetes_secret" "ssh_keypair" {
-  metadata {
-    name      = "ssh-keypair"
-    namespace = "flux-system"
-  }
-
-  type = "Opaque"
-
-  data = {
-    "identity.pub" = tls_private_key.flux.public_key_openssh
-    "identity"     = tls_private_key.flux.private_key_pem
-    "known_hosts"  = "github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg="
-  }
-
-  depends_on = [helm_release.flux2]
-}
-
-resource "helm_release" "flux2_sync" {
-  repository = "https://fluxcd-community.github.io/helm-charts"
-  chart      = "flux2-sync"
-  version    = "1.14.0"
-
-  name      = "flux2-sync"
-  namespace = "flux-system"
-
-  set = [
-    {
-      name  = "gitRepository.spec.url"
-      value = "ssh://github.com/seekin4u/hetzner-kuber.git"
-    },
-    {
-      name  = "gitRepository.spec.ref.branch"
-      value = "main"
-    },
-    {
-      name  = "gitRepository.spec.secretRef.name"
-      value = kubernetes_secret.ssh_keypair.metadata[0].name
-    },
-    {
-      name  = "gitRepository.spec.interval"
-      value = "1m"
-    },
-    {
-      name  = "kustomizations.root.path"
-      value = "./"
-    },
-    {
-      name  = "kustomizations.root.prune"
-      value = "true"
-    }
-  ]
-
-  depends_on = [kubernetes_secret.ssh_keypair]
 }
  
