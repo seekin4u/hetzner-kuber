@@ -1,6 +1,6 @@
 module "kubernetes" {
   source  = "hcloud-k8s/kubernetes/hcloud"
-  version = "3.12.2"
+  version = "5.0.0"
 
   cluster_name = "k8s"
   hcloud_token = var.hcloud
@@ -8,8 +8,11 @@ module "kubernetes" {
   cluster_kubeconfig_path  = "kubeconfig"
   cluster_talosconfig_path = "talosconfig"
 
-  cert_manager_enabled  = true
-  ingress_nginx_enabled = true
+  cert_manager_enabled       = true
+  cilium_gateway_api_enabled = true
+
+  talos_public_ipv6_enabled            = false
+  cluster_autoscaler_discovery_enabled = false
 
   control_plane_nodepools = [
     { name = "control", type = "cx23", location = "nbg1", count = 1 }
